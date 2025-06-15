@@ -13,7 +13,7 @@ Scenario Overview
 2. **Access the target system** using stolen credentials.
 3. **Privilege escalation** via shell misconfiguration (`/bin/bash -p` or `bash -p`).
 4. **Deploy and execute a ransomware-like script** to encrypt files.
-5. **descalation** 
+5. **de-escalation** 
 
 ---
 
