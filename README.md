@@ -6,14 +6,13 @@ This repository demonstrates a **complete attack chain simulation** in a control
 The goal is to emulate real-world attacker behavior to test and improve detection, response, and hardening capabilities.
 
 
-Scenario Overview
-
 > Simulated attack flow:
-1. **Brute-force attack** on SSH to gain user credentials.
-2. **Access the target system** using stolen credentials.
-3. **Privilege escalation** via shell misconfiguration (`/bin/bash -p` or `bash -p`).
-4. **Deploy and execute a ransomware-like script** to encrypt files.
-5. **de-escalation** 
+
+1. 🔐 **Brute-force attack** on SSH to gain user credentials.
+2. 🧑‍💻 **Access the target system** using stolen credentials.
+3. 🚀 **Privilege escalation** via shell misconfiguration (`/bin/bash -p`).
+4. 💣 **Deploy and execute a ransomware-like script** to encrypt files.
+5. 🔽 **De-escalation** (optional cleanup or simulation end).
 
 ---
 
