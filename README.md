@@ -28,7 +28,7 @@ The goal is to emulate real-world attacker behavior to test and improve detectio
 ##  Step 1: Brute Force Attack
 
 Simulate brute-forcing a user account (`victim`) using `nmap`:
-nmap --script ssh-brute --script-args userdb=username.txt,passdb=passwords.txt -p 22 10.0.2.10
+nmap --script ssh-brute --script-args userdb=username.txt,passdb=passwords.txt -p 22 <ip_address>
 
 ##  Step 2: login as a normal user 
  ssh user@server-ip
