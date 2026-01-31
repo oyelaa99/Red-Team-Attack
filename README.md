@@ -3,7 +3,7 @@ Before you dive into the technical steps, it is important to understand the cont
 
 ---
 
-# 🚩 Red-Team-Attack Simulation: Persistence & Escalation
+# 🚩 Red-Team-Attack Simulation: from brute force to Persistence & Escalation
 
 This repository demonstrates how a simple misconfiguration in a background task can lead to a full system takeover.
 
