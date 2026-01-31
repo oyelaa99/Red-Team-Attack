@@ -91,4 +91,4 @@ The Cron job runs the script as Root. Because the SUID bit (`+s`) is now set on 
 
 ### Why this is a "Persistence" method
 
-Even if the admin finds and deletes your /tmp/backdoor file, the "infection" is still in the cleanup.sh script. Every minute, the system will just recreate the backdoor for you. To truly stop you, the admin has to find the line you added to the script or fix the permissions.
+Even if the admin finds and deletes the /tmp/backdoor file, the "infection" is still in the cleanup.sh script. Every minute, the system will just recreate the backdoor. To truly stop it, the admin has to find the line the attacker  added to the script or fix the permissions.
