@@ -1,3 +1,6 @@
+
+Before you dive into the technical steps, it is important to understand the context of this simulation. This lab demonstrates a **Privilege Escalation** attack, which is the process an attacker uses to go from a "nobody" user to the "all-powerful" root user. In a real-world environment, attackers often look for **automated tasks (Cron jobs)** because they run with system-level authority. By identifying a script that the system runs as root but allows any user to edit, an attacker can essentially "hire" the operating system to perform malicious actions on their behalf. This exercise will show you exactly how a small oversight in file permissions—giving a script `777` access—can turn a routine maintenance task into a permanent backdoor for a hacker.
+
 ---
 
 # 🚩 Red-Team-Attack Simulation: Persistence & Escalation
@@ -87,8 +90,10 @@ The Cron job runs the script as Root. Because the SUID bit (`+s`) is now set on 
 ```bash
 /tmp/backdoor -p
 
-``` 
+```
+
+---
 
 ### Why this is a "Persistence" method
 
-Even if the admin finds and deletes the /tmp/backdoor file, the "infection" is still in the cleanup.sh script. Every minute, the system will just recreate the backdoor. To truly stop it, the admin has to find the line the attacker  added to the script or fix the permissions.
+Even if the admin finds and deletes the `/tmp/backdoor` file, the "infection" is still in the `cleanup.sh` script. Every minute, the system will just recreate the backdoor. To truly stop it, the admin has to find the line the attacker added to the script or fix the permissions.
